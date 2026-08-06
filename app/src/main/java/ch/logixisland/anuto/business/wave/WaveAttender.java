@@ -90,7 +90,7 @@ class WaveAttender implements Enemy.Listener {
     }
 
     void giveWaveReward() {
-        mScoreBoard.giveCredits(mWaveReward, true);
+        mScoreBoard.giveRewardCredits(mWaveReward, true);
         mWaveReward = 0;
     }
 
@@ -193,7 +193,7 @@ class WaveAttender implements Enemy.Listener {
 
     @Override
     public void enemyKilled(Enemy enemy) {
-        mScoreBoard.giveCredits(enemy.getReward(), true);
+        mScoreBoard.giveRewardCredits(enemy.getReward(), true);
     }
 
     @Override

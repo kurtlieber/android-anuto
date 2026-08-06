@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="reward_multiplier_entries">
+        <item>@string/reward_multiplier_1x</item>
+        <item>@string/reward_multiplier_2x</item>
+        <item>@string/reward_multiplier_5x</item>
+        <item>@string/reward_multiplier_100x</item>
+    </string-array>
+
+    <string-array name="reward_multiplier_entry_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>100</item>
+    </string-array>
+</resources>

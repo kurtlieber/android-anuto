@@ -196,7 +196,7 @@ public class WaveManager implements Persister, GameState.Listener {
 
         if (currentWave != null) {
             currentWave.giveWaveReward();
-            mScoreBoard.giveCredits(getEarlyBonus(), false);
+            mScoreBoard.giveRewardCredits(getEarlyBonus(), false);
         }
     }
 

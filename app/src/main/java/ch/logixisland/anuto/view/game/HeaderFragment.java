@@ -17,6 +17,7 @@ import ch.logixisland.anuto.AnutoApplication;
 import ch.logixisland.anuto.GameFactory;
 import ch.logixisland.anuto.R;
 import ch.logixisland.anuto.business.game.GameSpeed;
+import ch.logixisland.anuto.business.game.RewardMultiplier;
 import ch.logixisland.anuto.business.game.ScoreBoard;
 import ch.logixisland.anuto.business.tower.TowerSelector;
 import ch.logixisland.anuto.business.wave.WaveManager;
@@ -25,11 +26,12 @@ import ch.logixisland.anuto.util.StringUtils;
 import ch.logixisland.anuto.view.AnutoFragment;
 
 public class HeaderFragment extends AnutoFragment implements WaveManager.Listener, ScoreBoard.Listener,
-        GameSpeed.Listener, View.OnClickListener {
+        GameSpeed.Listener, RewardMultiplier.Listener, View.OnClickListener {
 
     private final WaveManager mWaveManager;
     private final GameSpeed mGameSpeed;
     private final ScoreBoard mScoreBoard;
+    private final RewardMultiplier mRewardMultiplier;
     private final TowerSelector mTowerSelector;
     private final ThemeManager mThemeManager;
 
@@ -53,6 +55,7 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
     public HeaderFragment() {
         GameFactory factory = AnutoApplication.getInstance().getGameFactory();
         mScoreBoard = factory.getScoreBoard();
+        mRewardMultiplier = factory.getRewardMultiplier();
         mWaveManager = factory.getWaveManager();
         mGameSpeed = factory.getSpeedManager();
         mTowerSelector = factory.getTowerSelector();
@@ -89,7 +92,7 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
         txt_wave.setText(getString(R.string.wave) + ": " + mWaveManager.getWaveNumber());
         txt_credits.setText(getString(R.string.credits) + ": " + StringUtils.formatSuffix(mScoreBoard.getCredits()));
         txt_lives.setText(getString(R.string.lives) + ": " + mScoreBoard.getLives());
-        txt_bonus.setText(getString(R.string.bonus) + ": " + StringUtils.formatSuffix(mScoreBoard.getWaveBonus() + mScoreBoard.getEarlyBonus()));
+        updateBonusText(mScoreBoard.getWaveBonus(), mScoreBoard.getEarlyBonus());
         btn_fast_forward_speed.setText(getString(R.string.var_speed, mGameSpeed.fastForwardMultiplier()));
         updateButtonFastForwardActive();
 
@@ -120,6 +123,7 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
         mWaveManager.addListener(this);
         mGameSpeed.addListener(this);
         mScoreBoard.addListener(this);
+        mRewardMultiplier.addListener(this);
     }
 
     @Override
@@ -131,6 +135,7 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
         mWaveManager.removeListener(this);
         mGameSpeed.removeListener(this);
         mScoreBoard.removeListener(this);
+        mRewardMultiplier.removeListener(this);
 
         mHandler.removeCallbacksAndMessages(null);
     }
@@ -202,7 +207,12 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
 
     @Override
     public void bonusChanged(final int waveBonus, final int earlyBonus) {
-        mHandler.post(() -> txt_bonus.setText(getString(R.string.bonus) + ": " + StringUtils.formatSuffix(waveBonus + earlyBonus)));
+        mHandler.post(() -> updateBonusText(waveBonus, earlyBonus));
+    }
+
+    @Override
+    public void multiplierChanged(int multiplier) {
+        mHandler.post(() -> updateBonusText(mScoreBoard.getWaveBonus(), mScoreBoard.getEarlyBonus()));
     }
 
     @Override
@@ -211,6 +221,11 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
             btn_fast_forward_speed.setText(getString(R.string.var_speed, mGameSpeed.fastForwardMultiplier()));
             updateButtonFastForwardActive();
         });
+    }
+
+    private void updateBonusText(int waveBonus, int earlyBonus) {
+        int preview = mRewardMultiplier.apply(waveBonus + earlyBonus);
+        txt_bonus.setText(getString(R.string.bonus) + ": " + StringUtils.formatSuffix(preview));
     }
 
     private void updateButtonFastForwardActive() {

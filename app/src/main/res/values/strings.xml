@@ -27,6 +27,11 @@
     <string name="start_tutorial">Start tutorial</string>
     <string name="start_tutorial_warning">Are you sure you want to start the tutorial? The game will restart.</string>
     <string name="transparent_menus">Transparent in-game menus</string>
+    <string name="reward_multiplier">Reward multiplier</string>
+    <string name="reward_multiplier_1x" translatable="false">1x</string>
+    <string name="reward_multiplier_2x" translatable="false">2x</string>
+    <string name="reward_multiplier_5x" translatable="false">5x</string>
+    <string name="reward_multiplier_100x" translatable="false">100x</string>
 
     <string name="game_over">Game Over!</string>
     <string name="score">Score</string>

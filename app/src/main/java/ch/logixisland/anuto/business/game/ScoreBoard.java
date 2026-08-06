@@ -19,6 +19,7 @@ public class ScoreBoard implements Persister {
     }
 
     private final GameEngine mGameEngine;
+    private final RewardMultiplier mRewardMultiplier;
 
     private int mCredits;
     private int mCreditsEarned;
@@ -28,8 +29,9 @@ public class ScoreBoard implements Persister {
 
     private final List<Listener> mListeners = new CopyOnWriteArrayList<>();
 
-    public ScoreBoard(GameEngine gameEngine) {
+    public ScoreBoard(GameEngine gameEngine, RewardMultiplier rewardMultiplier) {
         mGameEngine = gameEngine;
+        mRewardMultiplier = rewardMultiplier;
     }
 
     public void takeLives(final int lives) {
@@ -52,6 +54,25 @@ public class ScoreBoard implements Persister {
 
         if (earned) {
             mCreditsEarned += credits;
+        }
+
+        creditsChanged();
+    }
+
+    /**
+     * Grant a gameplay reward (kill / wave / early bonus). Spendable credits are multiplied;
+     * earned credits (score / difficulty) use the unmultiplied base amount.
+     */
+    public void giveRewardCredits(final int baseCredits, final boolean earned) {
+        if (mGameEngine.isThreadChangeNeeded()) {
+            mGameEngine.post(() -> giveRewardCredits(baseCredits, earned));
+            return;
+        }
+
+        mCredits += mRewardMultiplier.apply(baseCredits);
+
+        if (earned) {
+            mCreditsEarned += baseCredits;
         }
 
         creditsChanged();

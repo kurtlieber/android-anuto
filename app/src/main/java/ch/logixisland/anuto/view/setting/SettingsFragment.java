@@ -47,6 +47,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         registerListPreference(Preferences.BACK_BUTTON_MODE);
         registerListPreference(Preferences.THEME_INDEX);
+        registerListPreference(Preferences.REWARD_MULTIPLIER);
         setupChangeThemeConfirmationDialog();
         setupResetHighscores();
         setupResetTutorial();
