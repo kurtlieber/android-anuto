@@ -1,13 +1,29 @@
 # Anuto - Another Ugly Tower Defense
 
-[![Project Dashboard](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/mjaunandroidanuto/)
+**This is a private fork of [mjaun/android-anuto](https://github.com/mjaun/android-anuto).** Upstream remains the canonical project; changes here are intentional local mods on top of that base.
 
 <img src="./images/feature.png" width="400" />
 
 Anuto is yet another tower defense game for Android.
 However it features astonishing hand-drawn graphics and a smooth gameplay.
 
-## Download
+## Fork changes
+
+Compared to upstream, this fork adds:
+
+- **Reward multiplier** (Settings → Reward multiplier: 1× / 2× / 5× / 100×)
+  - Multiplies **wallet credits only** from kills, wave clears, and early-wave bonuses
+  - **Score and difficulty are unchanged** (still based on unmultiplied earned credits)
+  - HUD early-bonus preview shows the multiplied amount
+- **Obtainium-friendly releases** — GitHub Actions builds and attaches a signed APK on `v*` tags (`anuto-<version>.apk`)
+
+Current app version: **0.13.1** (based on upstream 0.13).
+
+## Download (this fork)
+
+Install from [GitHub Releases](https://github.com/kurtlieber/android-anuto/releases) (e.g. via [Obtainium](https://github.com/ImranR98/Obtainium)).
+
+For the original unforked app:
 
 <a href="https://f-droid.org/packages/ch.logixisland.anuto" target="_blank">
 <img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="100"/></a>
@@ -16,7 +32,7 @@ However it features astonishing hand-drawn graphics and a smooth gameplay.
 
 ## Beta Testing
 
-Become a [beta tester](https://play.google.com/apps/testing/ch.logixisland.anuto)!
+Become a [beta tester](https://play.google.com/apps/testing/ch.logixisland.anuto)! (upstream Play Store track)
 
 ## How to play
 
