@@ -1,0 +1,109 @@
+name: Release APK
+
+# Builds a signed release APK and attaches it to the GitHub Release for Obtainium.
+# Trigger: push a version tag (e.g. v0.13.2) or run manually from the Actions tab.
+#
+# Signing: restore the same debug keystore used for prior Obtainium installs via repo secret
+# ANDROID_DEBUG_KEYSTORE_BASE64 (base64 of ~/.android/debug.keystore). Without it, a
+# temporary keystore is generated (fine for a smoke test, but Obtainium updates may fail
+# if users already installed an APK signed with a different key).
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      create_draft_release:
+        description: 'Create a draft GitHub release for the current ref'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Restore signing keystore
+      env:
+        KEYSTORE_B64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
+      run: |
+        set -euo pipefail
+        mkdir -p "$HOME/.android"
+        KEYSTORE="$HOME/.android/debug.keystore"
+        if [ -n "${KEYSTORE_B64:-}" ]; then
+          echo "$KEYSTORE_B64" | base64 -d > "$KEYSTORE"
+          echo "Restored debug keystore from ANDROID_DEBUG_KEYSTORE_BASE64"
+        elif [ ! -f "$KEYSTORE" ]; then
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE" \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+          echo "::warning::No ANDROID_DEBUG_KEYSTORE_BASE64 secret; generated a temporary debug keystore. Obtainium upgrades may not match previously installed APKs."
+        fi
+        test -f "$KEYSTORE"
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build release APK
+      run: ./gradlew assembleRelease --no-daemon
+
+    - name: Name APK from versionName
+      id: apk
+      run: |
+        set -euo pipefail
+        VERSION=$(grep -E 'versionName\s+"' app/build.gradle | head -1 | sed -E 's/.*versionName[[:space:]]+"([^"]+)".*/\1/')
+        SRC="app/build/outputs/apk/release/app-release.apk"
+        DEST="app/build/outputs/apk/release/anuto-${VERSION}.apk"
+        test -f "$SRC"
+        cp -f "$SRC" "$DEST"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "path=$DEST" >> "$GITHUB_OUTPUT"
+        echo "name=anuto-${VERSION}.apk" >> "$GITHUB_OUTPUT"
+        ls -lh "$DEST"
+
+    - name: Upload APK to GitHub Release (tag push)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ${{ steps.apk.outputs.path }}
+        generate_release_notes: true
+        fail_on_unmatched_files: true
+
+    - name: Upload APK as workflow artifact (manual run)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.apk.outputs.name }}
+        path: ${{ steps.apk.outputs.path }}
+        if-no-files-found: error
+
+    - name: Create draft release (manual, optional)
+      if: github.event_name == 'workflow_dispatch' && inputs.create_draft_release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: manual-${{ github.sha }}
+        name: Manual build ${{ steps.apk.outputs.version }} (${{ github.sha }})
+        draft: true
+        files: ${{ steps.apk.outputs.path }}
+        fail_on_unmatched_files: true
