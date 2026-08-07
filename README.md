@@ -1,6 +1,6 @@
 # Anuto - Another Ugly Tower Defense
 
-**This is a private fork of [mjaun/android-anuto](https://github.com/mjaun/android-anuto).** Upstream remains the canonical project; changes here are intentional local mods on top of that base.
+**This is a fork of [mjaun/android-anuto](https://github.com/mjaun/android-anuto).** Upstream remains the canonical project; changes here are intentional local mods on top of that base.
 
 <img src="./images/feature.png" width="400" />
 
