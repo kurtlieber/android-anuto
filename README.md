@@ -1,6 +1,6 @@
 # Anuto - Another Ugly Tower Defense
 
-**This is a fork of [mjaun/android-anuto](https://github.com/mjaun/android-anuto).** Upstream remains the canonical project; changes here are intentional mods on top of that base.
+**This is a fork of [mjaun/android-anuto](https://github.com/mjaun/android-anuto) to add rewards multipliers as a form of a cheat code. Because sometimes, you just want to watch the world burn.** Upstream remains the canonical project; changes here are intentional mods on top of that base.
 
 <img src="./images/feature.png" width="400" />
 
@@ -16,12 +16,15 @@ Compared to upstream, this fork adds:
   - **Score and difficulty are unchanged** (still based on unmultiplied earned credits)
   - HUD early-bonus preview shows the multiplied amount
 - **Obtainium-friendly releases** — GitHub Actions builds and attaches a signed APK on `v*` tags (`anuto-<version>.apk`)
+- **Dedicated release signing** — APKs from **0.13.2+** use a private release keystore (not the Android debug key)
 
-Current app version: **0.13.1** (based on upstream 0.13).
+Current app version: **0.13.2** (based on upstream 0.13).
 
 ## Download (this fork)
 
 Install from [GitHub Releases](https://github.com/kurtlieber/android-anuto/releases) (e.g. via [Obtainium](https://github.com/ImranR98/Obtainium)).
+
+**Signing change:** if you installed **0.13.1** (debug-signed), uninstall it first, then install 0.13.2+. Android does not allow updates that change the signing certificate.
 
 For the original unforked app:
 

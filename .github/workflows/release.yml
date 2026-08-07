@@ -3,10 +3,12 @@ name: Release APK
 # Builds a signed release APK and attaches it to the GitHub Release for Obtainium.
 # Trigger: push a version tag (e.g. v0.13.2) or run manually from the Actions tab.
 #
-# Signing: restore the same debug keystore used for prior Obtainium installs via repo secret
-# ANDROID_DEBUG_KEYSTORE_BASE64 (base64 of ~/.android/debug.keystore). Without it, a
-# temporary keystore is generated (fine for a smoke test, but Obtainium updates may fail
-# if users already installed an APK signed with a different key).
+# Signing (required — no fallback keystore):
+#   ANDROID_RELEASE_KEYSTORE_BASE64  base64 of the release .keystore / .jks / .p12
+#   ANDROID_KEYSTORE_PASSWORD
+#   ANDROID_KEY_ALIAS
+#   ANDROID_KEY_PASSWORD
+# Losing or replacing this keystore breaks Obtainium/in-place updates for existing installs.
 
 on:
   push:
@@ -29,44 +31,71 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
     - name: Set up JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
 
-    - name: Restore signing keystore
+    - name: Restore release keystore
       env:
-        KEYSTORE_B64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
+        KEYSTORE_B64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+        ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
       run: |
         set -euo pipefail
-        mkdir -p "$HOME/.android"
-        KEYSTORE="$HOME/.android/debug.keystore"
-        if [ -n "${KEYSTORE_B64:-}" ]; then
-          echo "$KEYSTORE_B64" | base64 -d > "$KEYSTORE"
-          echo "Restored debug keystore from ANDROID_DEBUG_KEYSTORE_BASE64"
-        elif [ ! -f "$KEYSTORE" ]; then
-          keytool -genkeypair -v \
-            -keystore "$KEYSTORE" \
-            -storepass android \
-            -alias androiddebugkey \
-            -keypass android \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -dname "CN=Android Debug,O=Android,C=US"
-          echo "::warning::No ANDROID_DEBUG_KEYSTORE_BASE64 secret; generated a temporary debug keystore. Obtainium upgrades may not match previously installed APKs."
+        missing=0
+        for name in KEYSTORE_B64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+          if [ -z "${!name:-}" ]; then
+            echo "::error::Missing required secret/env: $name"
+            missing=1
+          fi
+        done
+        if [ "$missing" -ne 0 ]; then
+          echo "::error::Release signing secrets are required. Refusing to mint a temporary keystore."
+          exit 1
         fi
-        test -f "$KEYSTORE"
+        mkdir -p "$HOME/.android"
+        KEYSTORE="$HOME/.android/anuto-release.keystore"
+        echo "$KEYSTORE_B64" | base64 -d > "$KEYSTORE"
+        chmod 600 "$KEYSTORE"
+        test -s "$KEYSTORE"
+        echo "ANDROID_KEYSTORE_PATH=$KEYSTORE" >> "$GITHUB_ENV"
+        echo "Restored release keystore ($(wc -c < "$KEYSTORE") bytes)"
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
     - name: Build release APK
+      env:
+        ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
       run: ./gradlew assembleRelease --no-daemon
+
+    - name: Verify APK is signed (not debug)
+      run: |
+        set -euo pipefail
+        APK="app/build/outputs/apk/release/app-release.apk"
+        test -f "$APK"
+        # apksigner may or may not be on PATH; fall back to keytool jar print
+        if command -v apksigner >/dev/null 2>&1; then
+          apksigner verify --print-certs "$APK" | tee /tmp/apk-certs.txt
+        else
+          keytool -printcert -jarfile "$APK" | tee /tmp/apk-certs.txt
+        fi
+        if grep -qi 'CN=Android Debug' /tmp/apk-certs.txt; then
+          echo "::error::APK is still signed with the Android Debug certificate"
+          exit 1
+        fi
+        if ! grep -qi 'Anuto Release\|kurtlieber' /tmp/apk-certs.txt; then
+          echo "::warning::Could not confirm expected CN in cert output; dump follows"
+          cat /tmp/apk-certs.txt
+        fi
 
     - name: Name APK from versionName
       id: apk
@@ -84,15 +113,20 @@ jobs:
 
     - name: Upload APK to GitHub Release (tag push)
       if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
       with:
         files: ${{ steps.apk.outputs.path }}
         generate_release_notes: true
         fail_on_unmatched_files: true
+        body: |
+          ## Signing note
+          From **0.13.2** onward, APKs are signed with a dedicated **release** keystore (not the Android debug key).
+
+          If you installed **0.13.1** (or any debug-signed build), uninstall first, then install this APK — Android will not allow an in-place update across signing keys.
 
     - name: Upload APK as workflow artifact (manual run)
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: ${{ steps.apk.outputs.name }}
         path: ${{ steps.apk.outputs.path }}
@@ -100,7 +134,7 @@ jobs:
 
     - name: Create draft release (manual, optional)
       if: github.event_name == 'workflow_dispatch' && inputs.create_draft_release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
       with:
         tag_name: manual-${{ github.sha }}
         name: Manual build ${{ steps.apk.outputs.version }} (${{ github.sha }})

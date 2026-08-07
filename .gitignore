@@ -10,9 +10,16 @@
 *.iws
 .gradle
 /local.properties
+/keystore.properties
 /.idea/workspace.xml
 /.idea/libraries
 /build*
+
+# Signing material — never commit
+*.jks
+*.keystore
+*.p12
+*.bks
 
 app/*.apk
 app/release/
