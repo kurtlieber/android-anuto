@@ -36,6 +36,8 @@
     <string name="reward_multiplier_20x" translatable="false">20x</string>
     <string name="reward_multiplier_50x" translatable="false">50x</string>
     <string name="reward_multiplier_100x" translatable="false">100x</string>
+    <string name="reward_multiplier_500x" translatable="false">500x</string>
+    <string name="reward_multiplier_1000x" translatable="false">1000x</string>
 
     <string name="game_over">Game Over!</string>
     <string name="score">Score</string>

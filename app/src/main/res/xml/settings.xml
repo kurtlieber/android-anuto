@@ -25,8 +25,8 @@
     <ListPreference
         android:key="damage_multiplier"
         android:defaultValue="1"
-        android:entries="@array/reward_multiplier_entries"
-        android:entryValues="@array/reward_multiplier_entry_values"
+        android:entries="@array/damage_multiplier_entries"
+        android:entryValues="@array/damage_multiplier_entry_values"
         android:title="@string/damage_multiplier" />
     <ListPreference
         android:key="back_button_mode"
