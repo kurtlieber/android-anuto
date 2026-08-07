@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import ch.logixisland.anuto.AnutoApplication;
 import ch.logixisland.anuto.GameSettings;
 import ch.logixisland.anuto.engine.logic.GameEngine;
 import ch.logixisland.anuto.engine.logic.entity.Entity;
@@ -268,6 +269,11 @@ public abstract class Enemy extends Entity {
     }
 
     public void damage(float amount, Entity origin) {
+        amount = AnutoApplication.getInstance()
+                .getGameFactory()
+                .getDamageMultiplier()
+                .apply(amount);
+
         if (origin instanceof Tower) {
             Tower originTower = (Tower) origin;
 

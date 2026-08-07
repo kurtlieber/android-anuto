@@ -15,10 +15,12 @@ Compared to upstream, this fork adds:
   - Multiplies **wallet credits only** from kills, wave clears, and early-wave bonuses
   - **Score and difficulty are unchanged** (still based on unmultiplied earned credits)
   - HUD early-bonus preview shows the multiplied amount
+- **Damage multiplier** (Settings → Damage multiplier: 1× / 2× / 5× / 100×)
+  - Multiplies all tower damage applied to enemies
 - **Obtainium-friendly releases** — GitHub Actions builds and attaches a signed APK on `v*` tags (`anuto-<version>.apk`)
 - **Dedicated release signing** — APKs from **0.13.2+** use a private release keystore (not the Android debug key)
 
-Current app version: **0.13.2** (based on upstream 0.13).
+Current app version: **0.13.3** (based on upstream 0.13).
 
 ## Download (this fork)
 

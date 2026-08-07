@@ -9,6 +9,7 @@ import ch.logixisland.anuto.business.game.GameSpeed;
 import ch.logixisland.anuto.business.game.GameState;
 import ch.logixisland.anuto.business.game.HighScores;
 import ch.logixisland.anuto.business.game.MapRepository;
+import ch.logixisland.anuto.business.game.DamageMultiplier;
 import ch.logixisland.anuto.business.game.RewardMultiplier;
 import ch.logixisland.anuto.business.game.SaveGameRepository;
 import ch.logixisland.anuto.business.game.ScoreBoard;
@@ -69,6 +70,7 @@ public class GameFactory {
 
     // Business
     private RewardMultiplier mRewardMultiplier;
+    private DamageMultiplier mDamageMultiplier;
     private ScoreBoard mScoreBoard;
     private HighScores mHighScores;
     private TowerSelector mTowerSelector;
@@ -136,6 +138,7 @@ public class GameFactory {
         mMapRepository = new MapRepository();
         mSaveGameRepository = new SaveGameRepository(context);
         mRewardMultiplier = new RewardMultiplier(context);
+        mDamageMultiplier = new DamageMultiplier(context);
         mScoreBoard = new ScoreBoard(mGameEngine, mRewardMultiplier);
         mTowerAging = new TowerAging(mGameEngine);
         mSpeedManager = new GameSpeed(mGameEngine);
@@ -184,6 +187,10 @@ public class GameFactory {
 
     public RewardMultiplier getRewardMultiplier() {
         return mRewardMultiplier;
+    }
+
+    public DamageMultiplier getDamageMultiplier() {
+        return mDamageMultiplier;
     }
 
     public TowerSelector getTowerSelector() {

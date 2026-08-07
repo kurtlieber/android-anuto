@@ -10,5 +10,6 @@ public final class Preferences {
     public static final String SOUND_ENABLED = "sound_enabled";
     public static final String TUTORIAL_ENABLED = "tutorial_enabled";
     public static final String REWARD_MULTIPLIER = "reward_multiplier";
+    public static final String DAMAGE_MULTIPLIER = "damage_multiplier";
 
 }
