@@ -32,6 +32,9 @@
     <string name="reward_multiplier_1x" translatable="false">1x</string>
     <string name="reward_multiplier_2x" translatable="false">2x</string>
     <string name="reward_multiplier_5x" translatable="false">5x</string>
+    <string name="reward_multiplier_10x" translatable="false">10x</string>
+    <string name="reward_multiplier_20x" translatable="false">20x</string>
+    <string name="reward_multiplier_50x" translatable="false">50x</string>
     <string name="reward_multiplier_100x" translatable="false">100x</string>
 
     <string name="game_over">Game Over!</string>

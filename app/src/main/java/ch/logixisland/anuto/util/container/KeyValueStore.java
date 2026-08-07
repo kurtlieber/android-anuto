@@ -160,6 +160,22 @@ public class KeyValueStore {
         }
     }
 
+    public void putLong(String key, long value) {
+        try {
+            mJsonObject.put(key, value);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public long getLong(String key) {
+        try {
+            return mJsonObject.getLong(key);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void putFloat(String key, float value) {
         try {
             mJsonObject.put(key, value);

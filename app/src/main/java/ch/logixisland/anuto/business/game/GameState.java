@@ -65,7 +65,7 @@ public class GameState implements ScoreBoard.Listener, Persister {
     }
 
     @Override
-    public void creditsChanged(int credits) {
+    public void creditsChanged(long credits) {
 
     }
 

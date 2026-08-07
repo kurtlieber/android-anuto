@@ -15,7 +15,11 @@ public final class StringUtils {
     private static final DecimalFormat fmt1 = new DecimalFormat("0.0");
 
     public static String formatSuffix(int value) {
-        return formatSuffix(value, true);
+        return formatSuffix((double) value, true);
+    }
+
+    public static String formatSuffix(long value) {
+        return formatSuffix((double) value, true);
     }
 
     public static String formatSuffix(float value) {
@@ -23,24 +27,32 @@ public final class StringUtils {
     }
 
     public static String formatSuffix(float value, boolean integer) {
+        return formatSuffix((double) value, integer);
+    }
+
+    public static String formatSuffix(double value, boolean integer) {
         String suffix = "";
         boolean big = false;
 
-        if (value >= 1e10f) {
+        if (value >= 1e13d) {
+            suffix = "T";
+            value /= 1e12d;
+            big = true;
+        } else if (value >= 1e10d) {
             suffix = "G";
-            value /= 1e9f;
+            value /= 1e9d;
             big = true;
-        } else if (value >= 1e7f) {
+        } else if (value >= 1e7d) {
             suffix = "M";
-            value /= 1e6f;
+            value /= 1e6d;
             big = true;
-        } else if (value >= 1e4f) {
+        } else if (value >= 1e4d) {
             suffix = "k";
-            value /= 1e3f;
+            value /= 1e3d;
             big = true;
         }
 
-        DecimalFormat fmt = (value < 1e2f && (!integer || big)) ? fmt1 : fmt0;
+        DecimalFormat fmt = (value < 1e2d && (!integer || big)) ? fmt1 : fmt0;
         return fmt.format(value) + suffix;
     }
 

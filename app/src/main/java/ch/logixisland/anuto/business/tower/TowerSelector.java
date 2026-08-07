@@ -172,7 +172,7 @@ public class TowerSelector implements ScoreBoard.Listener, Entity.Listener, Towe
     }
 
     @Override
-    public void creditsChanged(int credits) {
+    public void creditsChanged(long credits) {
         if (mTowerInfo != null) {
             updateTowerInfo();
         }

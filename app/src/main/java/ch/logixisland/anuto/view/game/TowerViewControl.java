@@ -86,7 +86,7 @@ class TowerViewControl implements GameLoader.Listener, ScoreBoard.Listener, View
     }
 
     @Override
-    public void creditsChanged(int credits) {
+    public void creditsChanged(long credits) {
         mHandler.post(this::updateTowerEnabled);
     }
 

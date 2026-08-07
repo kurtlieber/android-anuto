@@ -196,7 +196,7 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
     }
 
     @Override
-    public void creditsChanged(final int credits) {
+    public void creditsChanged(final long credits) {
         mHandler.post(() -> txt_credits.setText(getString(R.string.credits) + ": " + StringUtils.formatSuffix(credits)));
     }
 
@@ -224,7 +224,7 @@ public class HeaderFragment extends AnutoFragment implements WaveManager.Listene
     }
 
     private void updateBonusText(int waveBonus, int earlyBonus) {
-        int preview = mRewardMultiplier.apply(waveBonus + earlyBonus);
+        long preview = mRewardMultiplier.apply(waveBonus + earlyBonus);
         txt_bonus.setText(getString(R.string.bonus) + ": " + StringUtils.formatSuffix(preview));
     }
 

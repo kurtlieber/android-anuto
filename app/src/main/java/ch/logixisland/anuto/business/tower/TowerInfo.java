@@ -23,7 +23,7 @@ public class TowerInfo {
     private TowerStrategy mStrategy;
     private final List<TowerInfoValue> mProperties;
 
-    public TowerInfo(Tower tower, int credits, boolean controlsEnabled) {
+    public TowerInfo(Tower tower, long credits, boolean controlsEnabled) {
         mValue = tower.getValue();
         mLevel = tower.getLevel();
         mLevelMax = tower.getMaxLevel();

@@ -35,8 +35,8 @@ public class RewardMultiplier implements SharedPreferences.OnSharedPreferenceCha
     }
 
     /** Multiplies a base reward for wallet / HUD preview. */
-    public int apply(int baseCredits) {
-        return baseCredits * mMultiplier;
+    public long apply(int baseCredits) {
+        return (long) baseCredits * mMultiplier;
     }
 
     public void addListener(Listener listener) {

@@ -11,7 +11,7 @@ import ch.logixisland.anuto.util.container.KeyValueStore;
 public class ScoreBoard implements Persister {
 
     public interface Listener {
-        void creditsChanged(int credits);
+        void creditsChanged(long credits);
 
         void bonusChanged(int waveBonus, int earlyBonus);
 
@@ -21,7 +21,8 @@ public class ScoreBoard implements Persister {
     private final GameEngine mGameEngine;
     private final RewardMultiplier mRewardMultiplier;
 
-    private int mCredits;
+    /** Spendable wallet — long so high reward multipliers do not overflow. */
+    private long mCredits;
     private int mCreditsEarned;
     private int mLives;
     private int mEarlyBonus;
@@ -108,7 +109,7 @@ public class ScoreBoard implements Persister {
         bonusChanged();
     }
 
-    public int getCredits() {
+    public long getCredits() {
         return mCredits;
     }
 
@@ -171,14 +172,14 @@ public class ScoreBoard implements Persister {
     @Override
     public void writeState(KeyValueStore gameState) {
         gameState.putInt("lives", mLives);
-        gameState.putInt("credits", mCredits);
+        gameState.putLong("credits", mCredits);
         gameState.putInt("creditsEarned", mCreditsEarned);
     }
 
     @Override
     public void readState(KeyValueStore gameState) {
         mLives = gameState.getInt("lives");
-        mCredits = gameState.getInt("credits");
+        mCredits = gameState.getLong("credits");
         mCreditsEarned = gameState.getInt("creditsEarned");
 
         creditsChanged();

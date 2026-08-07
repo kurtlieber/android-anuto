@@ -4,6 +4,9 @@
         <item>@string/reward_multiplier_1x</item>
         <item>@string/reward_multiplier_2x</item>
         <item>@string/reward_multiplier_5x</item>
+        <item>@string/reward_multiplier_10x</item>
+        <item>@string/reward_multiplier_20x</item>
+        <item>@string/reward_multiplier_50x</item>
         <item>@string/reward_multiplier_100x</item>
     </string-array>
 
@@ -11,6 +14,9 @@
         <item>1</item>
         <item>2</item>
         <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
         <item>100</item>
     </string-array>
 </resources>
