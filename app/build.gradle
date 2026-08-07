@@ -30,8 +30,8 @@ android {
         compileSdk 35
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 38
-        versionName "0.13.4"
+        versionCode 39
+        versionName "0.13.5"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {

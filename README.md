@@ -18,10 +18,11 @@ Compared to upstream, this fork adds:
   - Spendable credits use a 64-bit wallet so high multipliers do not wrap to negatives
 - **Damage multiplier** (Settings → Damage multiplier: 1× / 2× / 5× / 10× / 20× / 50× / 100×)
   - Multiplies all tower damage applied to enemies
+- **16-bit reskin (Original / light theme)** — Super Metroid–inspired pixel art for towers, enemies, projectiles, and pads (dark/colour theme variants still use upstream hand-drawn assets where separate files exist)
 - **Obtainium-friendly releases** — GitHub Actions builds and attaches a signed APK on `v*` tags (`anuto-<version>.apk`)
 - **Dedicated release signing** — APKs from **0.13.2+** use a private release keystore (not the Android debug key)
 
-Current app version: **0.13.4** (based on upstream 0.13).
+Current app version: **0.13.5** (based on upstream 0.13).
 
 ## Download (this fork)
 

@@ -56,3 +56,4 @@ __MS_WINDOWS/
 *.log
 *.log.*
 error_log*
+art/review/strips/frames/
